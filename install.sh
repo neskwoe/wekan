@@ -1,4 +1,33 @@
+#!/bin/bash
+
+if [[ $EUID -ne 0 ]]; then
+   echo ""
+   echo "This script must be run as root" 1>&2
+   echo ""
+   exit 1
+fi
+
+which aptitude > /dev/null
+# Use aptitude if it exists
+if [ $? -eq "0" ]; then
+	aptitude update && aptitude install -y mongodb-server make g++ gcc build-essential libssl-dev
+# else us apt-get
+elif [ $? -ne "0" ]; then
+	apt-get update && apt-get install -y mongodb-server make g++ gcc build-essential libssl-dev
+fi
+
+# wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.30.0/install.sh | bash
+
+# Check if curl exists
+which curl > /dev/null
+# If curl does not exist, install it
+if [ $? -ne "0" ]; then
+    echo "curl does not exist. I will install it for you..."
+    apt-get install curl
+fi
+
 #curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.30.0/install.sh | bash
+#curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.30.2/install.sh | bash
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
 
 source ~/.nvm/nvm.sh
